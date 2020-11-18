@@ -97,7 +97,6 @@ results_df %>%
 
 ```{r}
 filename_df = tibble( path = list.files("data/"))
-filename_df
 ```
 
 **2.Iterate over file names and read in data for each subject**
@@ -137,8 +136,15 @@ arm_df_tidy
 
 **4.Make a spaghetti plot**
 
+```{r}
+arm_df_tidy %>% unite("arm_id",c(arm,id), sep = "_", remove = F) %>%
+  ggplot(aes(x = week,y = value)) +
+  geom_point(aes(color = arm,group = id)) +
+  geom_path(aes(colour = arm,group = arm_id),alpha = .5)
 
+```
 
+Comment: At first, two group are similar and experimental group has larger standard deviation. With time by, control group is stable, while the value of experiment group increases.
 
 
 # Problem 3
