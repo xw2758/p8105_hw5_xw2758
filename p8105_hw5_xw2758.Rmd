@@ -91,31 +91,55 @@ results_df %>%
 ```
 
 
+# Problem 2
 
-```{r, error = TRUE}
-city_prop_test = function(df) {
-  
-  n_unsovled ...
-  n_total ... 
-  
-  prop.test(.....)
-  
-}
-homicide_df = 
-  read_csv("data/homicide-data.csv") %>% 
-  mutate(
-    city_state = str_c(city, state, sep = "_"),
-    resolved = case_when(
-      disposition == "Closed without arrest" ~ "unsolved",
-      disposition == "Open/No arrest"        ~ "unsolved",
-      disposition == "Closed by arrest"      ~ "solved",
-    )
-  ) %>% 
-  select(city_state, resolved) %>% 
-  filter(city_state != "Tulsa_AL") %>% 
-  nest(data = resolved)
+**1.create a dataframe containing all file names**
+
+```{r}
+filename_df = tibble( path = list.files("data/"))
+filename_df
 ```
 
+**2.Iterate over file names and read in data for each subject**
+
+```{r}
+ arm_df = filename_df %>% 
+ mutate(
+ path = str_c("data/", path),
+ map_df(.x = path, read.csv)
+ ) 
+arm_df
+```
+
+**3.Tidy the result**
+
+```{r}
+arm_df_tidy = 
+  arm_df %>%
+  mutate(
+    path = str_remove_all(path,".csv"),
+    path = str_remove_all(path, "data/")
+  ) %>%
+  separate(path, into = c("arm","id"), sep = 3) %>%
+  mutate(
+    id = str_remove_all(id, "_"),
+    arm = str_replace(arm,"con","control"),
+    arm = str_replace(arm,"exp","experiment")
+  ) %>% 
+ pivot_longer(
+  week_1:week_8,
+  names_prefix = "week_",
+  names_to = "week",
+  values_to = "value"
+ )
+arm_df_tidy
+```
+
+**4.Make a spaghetti plot**
 
 
+
+
+
+# Problem 3
 
